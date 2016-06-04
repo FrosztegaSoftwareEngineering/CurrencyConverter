@@ -15,6 +15,7 @@ public class FileRateSupplierTest {
 				{ "GBP", "AED", 7.2104 },
 				{ "GBP", "AUD", 1.51239 },
 				{ "GBP", "BAM", 2.60565 },
+				{ "AUD", "BAM", 2.60565 / 1.51239 },
 		};
 	}
 

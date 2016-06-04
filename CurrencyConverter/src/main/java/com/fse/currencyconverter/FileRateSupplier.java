@@ -25,11 +25,16 @@ public class FileRateSupplier implements RateSupplier {
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
+		ensureRelativeCurrencyIsSupported();
+	}
+
+	private void ensureRelativeCurrencyIsSupported() {
+		this.rateMap.put("GBP", 1.0);
 	}
 
 	@Override
 	public double forCodes(String fromCode, String toCode) {
-		return this.rateMap.get(toCode);
+		return this.rateMap.get(toCode) / this.rateMap.get(fromCode);
 	}
 
 }
