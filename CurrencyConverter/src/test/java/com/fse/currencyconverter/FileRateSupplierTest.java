@@ -21,6 +21,18 @@ public class FileRateSupplierTest {
 
 	@Test(dataProvider = "rateData")
 	public void shouldReturnCorrectRate(String fromCode, String toCode, double expectedRate) {
-		assertEquals(expectedRate, this.testSubject.forCodes(fromCode, toCode));
+		assertEquals(expectedRate, this.testSubject.forCodes(fromCode, toCode).rate());
+	}
+
+	@Test
+	public void shouldReturnCorrectCountryNames() {
+		assertEquals("Australia", this.testSubject.forCodes("GBP", "AUD").countryName());
+		assertEquals("Bulgaria", this.testSubject.forCodes("AUD", "BGN").countryName());
+	}
+
+	@Test
+	public void shouldReturnCorrectCurrencyNames() {
+		assertEquals("Dirhams", this.testSubject.forCodes("GBP", "AED").currencyName());
+		assertEquals("Convertible Marka", this.testSubject.forCodes("AUD", "BAM").currencyName());
 	}
 }
