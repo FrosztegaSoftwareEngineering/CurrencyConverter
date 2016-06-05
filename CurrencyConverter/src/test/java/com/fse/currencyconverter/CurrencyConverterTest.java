@@ -49,4 +49,14 @@ public class CurrencyConverterTest {
 		assertEquals(converted, 5.20);
 		verify(this.rateSupplier).forCodes(fromCode, toCode);
 	}
+
+	@Test
+	public void shouldRoundUpTo2DecimalPlaces() {
+		// given
+		when(this.rateSupplier.forCodes(anyString(), anyString())).thenReturn(1.50000000001);
+		// when
+		final double converted = this.testSubject.convert("1.00", null, null);
+		// then
+		assertEquals(converted, 1.51);
+	}
 }
