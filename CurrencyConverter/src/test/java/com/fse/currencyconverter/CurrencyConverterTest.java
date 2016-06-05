@@ -10,6 +10,7 @@ import org.mockito.MockitoAnnotations;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.fse.currencyconverter.model.ConvertedCurrency;
 import com.fse.currencyconverter.model.RelativeExchangeRate;
 
 public class CurrencyConverterTest {
@@ -33,9 +34,9 @@ public class CurrencyConverterTest {
 		final String fromCode = "GBP";
 		final String toCode = "GBP";
 		// when
-		final double converted = this.testSubject.convert(amount, fromCode, toCode);
+		final ConvertedCurrency converted = this.testSubject.convert(amount, fromCode, toCode);
 		// then
-		assertEquals(converted, 1.00);
+		assertEquals(converted.amount(), 1.00);
 	}
 
 	@Test
@@ -46,9 +47,9 @@ public class CurrencyConverterTest {
 		final String fromCode = "GBP";
 		final String toCode = "JPY";
 		// when
-		final double converted = this.testSubject.convert(amount, fromCode, toCode);
+		final ConvertedCurrency converted = this.testSubject.convert(amount, fromCode, toCode);
 		// then
-		assertEquals(converted, 5.20);
+		assertEquals(converted.amount(), 5.20);
 		verify(this.rateSupplier).forCodes(fromCode, toCode);
 	}
 
@@ -57,12 +58,38 @@ public class CurrencyConverterTest {
 		// given
 		when(this.rateSupplier.forCodes(anyString(), anyString())).thenReturn(rate(1.50000000001));
 		// when
-		final double converted = this.testSubject.convert("1.00", null, null);
+		final ConvertedCurrency converted = this.testSubject.convert("1.00", null, null);
 		// then
-		assertEquals(converted, 1.51);
+		assertEquals(converted.amount(), 1.51);
+	}
+
+	@Test
+	public void shouldReturnCountryNameOfTheTargetCurrencyCode() {
+		// given
+		final String countryName = "countryName";
+		when(this.rateSupplier.forCodes(anyString(), anyString())).thenReturn(rate(1.0, countryName, null));
+		// when
+		final ConvertedCurrency converted = this.testSubject.convert("1.00", null, null);
+		// then
+		assertEquals(converted.countryName(), countryName);
+	}
+
+	@Test
+	public void shouldReturnCurrencyNameOfTheTargetCurrencyCode() {
+		// given
+		final String currencyName = "currencyName";
+		when(this.rateSupplier.forCodes(anyString(), anyString())).thenReturn(rate(1.0, null, currencyName));
+		// when
+		final ConvertedCurrency converted = this.testSubject.convert("1.00", null, null);
+		// then
+		assertEquals(converted.currencyName(), currencyName);
 	}
 
 	private RelativeExchangeRate rate(double rateValue) {
-		return new RelativeExchangeRate(rateValue, null, null);
+		return rate(rateValue, null, null);
+	}
+
+	private RelativeExchangeRate rate(double rateValue, String countryName, String currencyName) {
+		return new RelativeExchangeRate(rateValue, countryName, currencyName);
 	}
 }
